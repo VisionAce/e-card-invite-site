@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>邀請頁 — 即時彈幕留言</title>
+<style>
+:root{--bg:#0b0b0b;--panel: rgba(255,255,255,0.06);--accent: #ffffff;}
+html,body{height:100%;margin:0;font-family:"Noto Sans TC",sans-serif;background:linear-gradient(180deg,#141414 0%,#0b0b0b 100%);overflow:hidden;}
+
+/* 全螢幕容器 */
+.card{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  color: var(--accent);
+  overflow: hidden;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* 彈幕層覆蓋全螢幕 */
+.danmu-layer{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+.danmu-item{
+  position: absolute;
+  white-space: nowrap;
+  font-weight:600;
+  font-size:18px;
+  color:#fff;
+  text-shadow:0 1px 4px rgba(0,0,0,0.6);
+  pointer-events:auto;
+  padding:4px 8px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.06);
+  transform:translateX(100vw);
+  will-change:transform;
+}
+
+/* 頂部資訊區 */
+.header{
+  position: absolute;
+  top:20px;
+  left:50%;
+  transform: translateX(-50%);
+  width: 95%;
+  max-width: 900px;
+}
+.header h1{margin:0 0 8px 0;font-size:28px;}
+.header p.lead{margin:0 0 14px 0;opacity:.9;}
+.header .info{display:flex;justify-content:space-between;font-size:13px;opacity:.85;}
+
+/* 底部表單區 */
+.form-wrapper{
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 95%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.form{
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+input[type="text"]{padding:10px;border-radius:8px;border:0;background:rgba(255,255,255,0.06);color:#fff;flex:0 0 160px}
+input.msg{flex:1}
+.btn{background:#fff;color:#000;padding:10px 16px;border-radius:999px;border:none;cursor:pointer}
+.meta{color:#fff;font-size:13px;opacity:.8; text-align:center;}
+
+@media(max-width:600px){
+  h1{font-size:20px;}
+  .danmu-item{font-size:14px;}
+  input[type="text"]{flex-basis:110px;}
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <!-- 彈幕層 -->
+  <div class="danmu-layer" id="danmuLayer"></div>
+
+  <!-- 頂部資訊 -->
+  <div class="header">
+    <h1 id="title">活動邀請 — 即時彈幕留言</h1>
+    <p class="lead" id="subtitle">輸入暱稱與訊息，留言會像彈幕一樣飄過頁面。</p>
+    <div class="info">
+      <div>邀請碼：<strong id="inviteCode">6885dc</strong></div>
+      <div>版本：<span id="ver">v3</span></div>
+    </div>
+  </div>
+
+  <!-- 底部表單 -->
+  <div class="form-wrapper">
+    <div class="form">
+      <input id="nick" type="text" placeholder="暱稱 (最多30字)" maxlength="30" required>
+      <input id="msg" class="msg" type="text" placeholder="說點什麼吧 (最多200字)" maxlength="200" required>
+      <button id="sendBtn" class="btn">送出</button>
+    </div>
+    <div class="meta">＊每次送出後按鈕會停用 5 秒。</div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const inviteCode = urlParams.get("code") || "6885dc";
+const version = urlParams.get("v") || "v1";
+document.getElementById("inviteCode").innerText = inviteCode;
+document.getElementById("ver").innerText = version;
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAAehrte_RNT2POHk2g1S6IKtA-i6OFtvs",
+  authDomain: "e-card-invite.firebaseapp.com",
+  projectId: "e-card-invite",
+  storageBucket: "e-card-invite.firebasestorage.app",
+  messagingSenderId: "820854630066",
+  appId: "1:820854630066:web:1690f03a7e35991d100bab",
+  measurementId: "G-49NDWVRXBH"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const nickEl = document.getElementById("nick");
+const msgEl = document.getElementById("msg");
+const sendBtn = document.getElementById("sendBtn");
+const danmuLayer = document.getElementById("danmuLayer");
+const messagesMap = new Map();
+let danmuQueue = [];
+const MAX_MESSAGES = 500;
+
+function addDanmu(text){
+  const el = document.createElement("div");
+  el.className = "danmu-item";
+  el.innerText = text;
+  const top = Math.random() * danmuLayer.clientHeight * 0.85; // 保留底部表單空間
+  el.style.top = top + "px";
+  el.style.background = `rgba(255,255,255,${0.04 + Math.random()*0.08})`;
+  danmuLayer.appendChild(el);
+
+  const len = Math.max(5,text.length);
+  const duration = 4 + Math.min(10,len/5);
+  const start = performance.now();
+  const startX = danmuLayer.clientWidth + 20;
+  const endX = - (el.clientWidth + 20);
+
+  function frame(now){
+    const t = (now - start)/(duration*1000);
+    if(t>=1){ el.remove(); return; }
+    el.style.transform = `translateX(${startX + (endX-startX)*t}px)`;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  setTimeout(()=>el.remove(),(duration+1)*1000);
+}
+
+function playDanmuLoop(){
+  if(danmuQueue.length===0) return;
+  const msg = danmuQueue.shift();
+  addDanmu(`${msg.nick}: ${msg.text}`);
+  danmuQueue.push(msg);
+}
+setInterval(playDanmuLoop,2000);
+
+function loadHistory(){
+  db.collection('messages').orderBy('ts','asc').limit(MAX_MESSAGES)
+    .get().then(snap=>{
+      snap.forEach(doc=>{
+        if(!messagesMap.has(doc.id)){
+          messagesMap.set(doc.id, doc.data());
+        }
+      });
+      danmuQueue = Array.from(messagesMap.values());
+    });
+}
+loadHistory();
+
+db.collection('messages').orderBy('ts','asc')
+  .onSnapshot(snap=>{
+    snap.docChanges().forEach(change=>{
+      if(change.type==='added' && !messagesMap.has(change.doc.id)){
+        const d = change.doc.data();
+        messagesMap.set(change.doc.id,d);
+        danmuQueue.push(d);
+      }
+    });
+    while(danmuQueue.length>MAX_MESSAGES) danmuQueue.shift();
+  });
+
+let disabledUntil=0;
+function sendMessage(){
+  if(Date.now()<disabledUntil) return;
+  const nick = nickEl.value.trim();
+  const text = msgEl.value.trim();
+  if(!nick){ alert("請輸入暱稱"); return; }
+  if(!text){ alert("請輸入留言"); return; }
+  const nickExists = Array.from(messagesMap.values()).some(m=>m.nick===nick);
+  if(nickExists){ alert("暱稱已存在，請使用不同暱稱"); nickEl.focus(); return; }
+
+  sendBtn.disabled = true;
+  disabledUntil = Date.now()+5000;
+  setTimeout(()=>sendBtn.disabled=false,5000);
+
+  db.collection('messages').add({
+    nick,text,ts:firebase.firestore.FieldValue.serverTimestamp(),
+    code:inviteCode,ver:version
+  });
+
+  nickEl.value = "";
+  msgEl.value = "";
+}
+
+sendBtn.onclick=sendMessage;
+msgEl.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();sendMessage();}};
+</script>
+</body>
+</html>

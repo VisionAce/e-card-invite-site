@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>滿版背景輪播（遮罩+漸層）</title>
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; height:100%; overflow:hidden; font-family:sans-serif; }
+
+/* 整個輪播區塊 */
+.carousel {
+  width:100vw;
+  height:100vh;
+  position:relative;
+  overflow:hidden;
+}
+
+/* 多張圖片容器 */
+.slides {
+  display:flex;
+  height:100%;
+  transition: transform 0.7s ease-in-out;
+}
+
+/* 單張圖片外層（含漸層遮罩） */
+.slide {
+  position:relative;
+  width:100vw;
+  height:100vh;
+  flex-shrink:0;
+
+  /* 獨立遮罩，讓圖片無論明暗都能看清文字 */
+  background: linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.25),
+      rgba(0,0,0,0.55)
+    );
+}
+
+/* 圖片保持比例 & 滿版裁切 */
+.slide img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:-1;
+}
+
+/* 中央文字 */
+.overlay-text {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  text-align:center;
+  color:white;
+  z-index:10;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+}
+
+.overlay-text h1 {
+  font-size:2em;
+  margin-bottom:10px;
+}
+
+.overlay-text button {
+  padding:10px 20px;
+  font-size:1.2em;
+  border:none;
+  border-radius:10px;
+  background:rgba(255,255,255,0.2);
+  color:white;
+  backdrop-filter: blur(4px);
+  cursor:pointer;
+}
+
+/* 底部圓點 */
+.dots {
+  position:absolute;
+  bottom:25px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:10px;
+  z-index:20;
+}
+
+.dot {
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background: rgba(255,255,255,0.4);
+  cursor:pointer;
+}
+
+.dot.active {
+  background: white;
+}
+</style>
+</head>
+<body>
+
+<div class="carousel">
+  <div class="slides">
+
+    <!-- 圖片改獨立成 slide，並自動適應大小 -->
+    <div class="slide">
+      <img src="images/LINE_NOTE_251114_1.jpg">
+    </div>
+    <div class="slide">
+      <img src="images/LINE_NOTE_251114_2.jpg">
+    </div>
+    <div class="slide">
+      <img src="images/LINE_NOTE_251114_3.jpg">
+    </div>
+
+  </div>
+
+  <div class="overlay-text">
+    <h1>歡迎來到我的網站</h1>
+    <button>開始體驗</button>
+  </div>
+
+  <div class="dots"></div>
+</div>
+
+<script>
+const slides = document.querySelector(".slides");
+const slideCount = document.querySelectorAll(".slide").length;
+let counter = 0;
+
+/* 動態生成圓點 */
+const dotsContainer = document.querySelector(".dots");
+for (let i = 0; i < slideCount; i++) {
+  const dot = document.createElement("div");
+  dot.classList.add("dot");
+  if (i === 0) dot.classList.add("active");
+  dotsContainer.appendChild(dot);
+
+  dot.addEventListener("click", () => {
+    counter = i;
+    updateSlide();
+    resetInterval();
+  });
+}
+const dots = document.querySelectorAll(".dot");
+
+/* 更新畫面 */
+function updateSlide() {
+  slides.style.transform = `translateX(${-counter * 100}vw)`;
+  dots.forEach((d, i) => d.classList.toggle("active", i === counter));
+}
+
+/* 自動輪播 */
+let interval = setInterval(() => {
+  counter = (counter + 1) % slideCount;
+  updateSlide();
+}, 4000);
+
+function resetInterval() {
+  clearInterval(interval);
+  interval = setInterval(() => {
+    counter = (counter + 1) % slideCount;
+    updateSlide();
+  }, 4000);
+}
+
+/* 手勢滑動 */
+let startX = 0;
+slides.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+slides.addEventListener("touchend", e => {
+  let endX = e.changedTouches[0].clientX;
+  if (endX - startX > 50) counter = (counter - 1 + slideCount) % slideCount;
+  else if (startX - endX > 50) counter = (counter + 1) % slideCount;
+  updateSlide();
+  resetInterval();
+});
+</script>
+
+</body>
+</html>

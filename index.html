@@ -1,106 +1,130 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>專屬邀請頁面</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      font-family: "Noto Sans TC", sans-serif;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #5b2be0, #8a63f8, #5b2be0);
-      background-size: 300% 300%;
-      animation: bgmove 8s ease infinite;
-    }
-    @keyframes bgmove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .container {
-      text-align: center;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 40px;
-      border-radius: 16px;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    }
-    h1 {
-      margin-bottom: 10px;
-      font-size: 2rem;
-      letter-spacing: 1px;
-    }
-    p {
-      font-size: 1rem;
-      margin-bottom: 20px;
-    }
-    button {
-      background: #fff;
-      color: #5b2be0;
-      border: none;
-      border-radius: 25px;
-      padding: 12px 30px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    button:hover {
-      transform: scale(1.05);
-      background: #f1e9ff;
-    }
-    .code {
-      font-size: 0.9rem;
-      opacity: 0.9;
-      margin-top: 10px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>專屬邀請頁面</title>
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  font-family: "Noto Sans TC", sans-serif;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #5b2be0, #8a63f8, #5b2be0);
+  background-size: 300% 300%;
+  animation: bgmove 8s ease infinite;
+}
+@keyframes bgmove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.container {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 40px;
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+h1 { margin-bottom: 10px; font-size: 2rem; letter-spacing: 1px; }
+p { font-size: 1rem; margin-bottom: 20px; }
+button {
+  background: #fff;
+  color: #5b2be0;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 30px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 5px;
+}
+button:hover { transform: scale(1.05); background: #f1e9ff; }
+.code { font-size: 0.9rem; opacity: 0.9; margin-top: 10px; }
+/* 手機自適應按鈕換行 */
+.buttons-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1 id="title">專屬邀請頁面</h1>
-    <p id="message">請點擊下方按鈕以查看內容</p>
+<div class="container">
+  <h1 id="title">專屬邀請頁面</h1>
+  <p id="message">請點擊下方按鈕以查看內容</p>
+  <div class="buttons-wrapper">
     <button id="actionBtn">立即查看</button>
-    <div class="code" id="codeInfo"></div>
+    <button id="secondBtn">前往官方網站</button>
+    <button id="thirdBtn">分享邀請頁</button>
   </div>
+  <div class="code" id="codeInfo"></div>
+</div>
 
-  <script>
-    // 解析網址參數
-    const urlParams = new URLSearchParams(window.location.search);
-    const path = window.location.pathname.split("/").filter(Boolean);
-    const inviteCode = path[1] || "unknown";
-    const version = urlParams.get("v") || "v1";
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const path = window.location.pathname.split("/").filter(Boolean);
+const inviteCode = path[1] || "6885dc"; // 預設邀請碼
+const version = urlParams.get("v") || "v1";
 
-    // 顯示代碼與版本資訊
-    document.getElementById("codeInfo").innerText =
-      `邀請碼：${inviteCode}　版本：${version}`;
+// 顯示代碼與版本資訊
+document.getElementById("codeInfo").innerText =
+  `邀請碼：${inviteCode}　版本：${version}`;
 
-    // 根據不同代碼可動態變更內容
-    const dataMap = {
-      "6885dc": {
-        title: "🎉 歡迎加入 VIP 專屬活動！",
-        message: "這是您的邀請頁面，點擊下方按鈕進入。",
-        button: "立即參加",
-        link: "https://www.example.com/join"
-      },
-      "default": {
-        title: "歡迎來到邀請頁面",
-        message: "請確認您的邀請碼是否正確。",
-        button: "參加婚禮GO!",
-        link: "https://docs.google.com/forms/d/e/1FAIpQLScqtqDqtzWxFfjNVssRJI-fF8QA7eAABio5qBMoYBfuMzzybA/viewform?usp=dialog"
-      }
-    };
+// 按邀請碼設定頁面資訊與按鈕
+const dataMap = {
+  "6885dc": {
+    title: "🎉 歡迎加入 VIP 專屬活動！",
+    message: "這是您的邀請頁面，點擊下方按鈕進入。",
+    button: "立即參加",
+    link: "invite2.html",
+    secondButton: "前往官方網站",
+    secondLink: "https://www.example.com",
+    thirdButton: "分享邀請頁",
+    thirdLink: "https://www.example.com/share"
+  },
+  "default": {
+    title: "歡迎來到邀請頁面",
+    message: "請確認您的邀請碼是否正確。",
+    button: "留下祝福",
+    link: "invite2.html",
+    secondButton: "參加婚禮GO!",
+    secondLink: "https://docs.google.com/forms/d/e/1FAIpQLScqtqDqtzWxFfjNVssRJI-fF8QA7eAABio5qBMoYBfuMzzybA/viewform?usp=dialog",
+    thirdButton: "圖片輪播",
+    thirdLink: "background.html"
+  }
+};
 
-    const info = dataMap[inviteCode] || dataMap["default"];
-    document.getElementById("title").innerText = info.title;
-    document.getElementById("message").innerText = info.message;
-    document.getElementById("actionBtn").innerText = info.button;
-    document.getElementById("actionBtn").onclick = () => window.location.href = info.link;
-  </script>
+const info = dataMap[inviteCode] || dataMap["default"];
+document.getElementById("title").innerText = info.title;
+document.getElementById("message").innerText = info.message;
+
+// 設定第一個按鈕
+const actionBtn = document.getElementById("actionBtn");
+actionBtn.innerText = info.button;
+actionBtn.onclick = () => {
+  const targetUrl = `${info.link}?code=${inviteCode}&v=${version}`;
+  window.location.href = targetUrl;
+};
+
+// 設定第二個按鈕
+const secondBtn = document.getElementById("secondBtn");
+secondBtn.innerText = info.secondButton;
+secondBtn.onclick = () => {
+  window.location.href = info.secondLink;
+};
+
+// 設定第三個按鈕
+const thirdBtn = document.getElementById("thirdBtn");
+thirdBtn.innerText = info.thirdButton;
+thirdBtn.onclick = () => {
+  window.location.href = info.thirdLink;
+};
+</script>
 </body>
 </html>
