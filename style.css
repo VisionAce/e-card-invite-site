@@ -1,0 +1,505 @@
+/* ------------------------------------
+ * 1. 基本設置 & 手機響應式
+ * ------------------------------------ */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: '微軟正黑體', 'Arial', sans-serif;
+    background-color: #F8F8F8;
+    color: #333;
+    height: 100%;
+    overflow: hidden;
+    /* 確保寬高計算模式統一 */
+    box-sizing: border-box;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+/* 確保所有頁面層疊和過渡 */
+.page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+}
+
+.page.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 20;
+}
+
+/* ------------------------------------
+ * 2. 信封頁面樣式 (擬真版 - 加大 340x240)
+ * ------------------------------------ */
+#envelope-page {
+    background-color: #E0C7A6; /* 背景色 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    perspective: 1000px; /* 增加 3D 透視感 */
+    z-index: 99;
+}
+
+.envelope-wrapper {
+    position: relative;
+    width: 340px;  /* 加大尺寸 */
+    height: 240px; /* 加大尺寸 */
+    margin-top: 50px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.envelope {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* 1. 信封背板 (最底層) */
+.back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #C09268; /* 信封內裏顏色 */
+    border-radius: 5px;
+    z-index: 1;
+}
+
+/* 2. 卡片 (中間層，初始隱藏) */
+.letter {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 320px;
+    height: 220px;
+    background-color: white;
+    border-radius: 5px;
+    z-index: 2; /* 在背板之上，口袋之下 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+    /* 初始狀態：透明且不移動 */
+    opacity: 0;
+    transform: translateY(0);
+    transition: transform 1s ease-in-out, opacity 0.8s ease-in-out;
+}
+
+.letter-content {
+    color: #333;
+}
+.letter-content h3 {
+    margin: 0;
+    font-size: 24px;
+    color: #8B0000;
+}
+
+/* 3. 信封口袋 (下方的固定三角形) */
+.pocket {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    z-index: 3;
+    border-style: solid;
+    /* 340/2 = 170px 左右邊框寬度 */
+    border-width: 0 170px 140px 170px;
+    border-color: transparent transparent #D4A373 transparent; /* 信封顏色 */
+}
+
+/* 4. 信封蓋子 (頂部可翻轉的三角形) */
+.flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    z-index: 4;
+    
+    border-style: solid;
+    /* 125px 讓尖端剛好在中心點 (240/2=120) 之下 5px 處 */
+    border-width: 125px 170px 0 170px;
+    border-color: #D4A373 transparent transparent transparent;
+    
+    /* 動畫關鍵：設定旋轉軸在頂部 */
+    transform-origin: top;
+    transition: transform 0.6s ease-in-out, z-index 0.1s 0.6s;
+}
+
+/* 封口貼紙 (愛心) - 完全置中 */
+.seal {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    width: 70px;
+    height: 70px;
+    background-color: #8B0000;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    
+    /* 引用動畫 */
+    animation: pulse 2s infinite;
+}
+
+.seal i {
+    font-size: 24px;
+}
+
+.envelope-text {
+    margin-top: 50px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* ------------------------------------
+ * 3. 信封開啟動畫狀態
+ * ------------------------------------ */
+
+/* 1. 蓋子打開 */
+.envelope.open .flap {
+    transform: rotateX(180deg); /* 向上翻轉 180度 */
+    z-index: 1; /* 翻開後層級變最低 */
+}
+
+/* 2. 卡片滑出 */
+.envelope.open .letter {
+    opacity: 1; /* 變成不透明 */
+    transform: translateY(-100px); /* 向上移動 100px */
+    z-index: 5; /* 層級變高，蓋過口袋 */
+    transition-delay: 0.6s; /* 等蓋子翻完再動 */
+}
+
+/* 3. 貼紙消失 */
+.envelope.open .seal {
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+/* 4. 愛心脈衝動畫 (包含置中 transform 以避免覆蓋) */
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.1); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ------------------------------------
+ * 4. 內容頁面樣式 (滾動設定)
+ * ------------------------------------ */
+h1, h2, h3 {
+    text-align: center;
+    color: #8B0000;
+}
+
+/* 頂部功能導航欄 (固定不動) */
+.fixed-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-color: #8B0000;
+    color: white;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 30;
+}
+
+.fixed-bar span {
+    padding: 0 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* 可滾動的內容區域 */
+.scrollable-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-top: 50px;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 內容區塊風格化 */
+section {
+    padding: 20px;
+    margin-bottom: 30px;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.hero-section {
+    background: url('wedding_bg.jpg') no-repeat center center/cover;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    padding: 50px 20px;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.hero-section h1 { color: white; margin-bottom: 0; font-size: 32px; }
+.hero-section h2 { color: white; margin-top: 5px; font-size: 24px; }
+.date {
+    font-size: 16px;
+    margin-top: 15px;
+    padding: 5px 10px;
+    background: rgba(139, 0, 0, 0.7);
+    border-radius: 5px;
+}
+
+.details h4 {
+    color: #8B0000;
+    border-bottom: 2px solid #D4A373;
+    padding-bottom: 5px;
+}
+
+footer {
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 12px;
+    color: #999;
+}
+
+/* ------------------------------------
+ * 5. 內容區塊切換樣式
+ * ------------------------------------ */
+.content-section {
+    display: none;
+    width: 100%;
+    min-height: calc(100vh - 50px);
+}
+
+.content-section.active {
+    display: block;
+}
+
+/* 確保相簿和留言板全屏顯示 */
+.full-screen {
+    position: relative;
+    height: calc(100vh - 50px);
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* ------------------------------------
+ * 6. 相簿背景樣式 (Carousel) - 確保滿版自適應
+ * ------------------------------------ */
+/* 相簿背景容器 (在 #danmu-comment 內部) */
+.carousel-wrapper.background-slides {
+    position: absolute; /* 絕對定位到留言區頂部 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* 確保在留言內容之下 */
+    overflow: hidden;
+}
+
+.carousel-wrapper .slides {
+    display: flex;
+    height: 100%;
+    transition: transform 0.7s ease-in-out;
+}
+.carousel-wrapper .slide {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+  /* 增加深色遮罩，確保文字可讀性 */
+  background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.6));
+}
+.carousel-wrapper .slide img, .carousel-wrapper .slide video {
+  width: 100%;
+  height: 100%;
+  /* 關鍵設置：確保圖片/影片滿版覆蓋，並保持其長寬比 */
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1; /* 在遮罩之下 */
+}
+
+/* 移除不再需要的獨立相簿導航點樣式 */
+.dots, .overlay-text { display: none; }
+
+
+/* ------------------------------------
+ * 7. 新增：音樂控制按鈕樣式
+ * ------------------------------------ */
+.music-btn {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  /* 核心修正：改為主題紅色，提供高對比 */
+  background: #8B0000;
+  /* 移除 backdrop-filter */
+  position: fixed;
+  right: 20px;
+  bottom: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.3s;
+  /* 增加白色外框陰影 (0 0 0 3px #fff) + 標準陰影，確保在淺色背景上突出 */
+  box-shadow: 0 0 0 3px #fff, 0 4px 14px rgba(0,0,0,0.4);
+  z-index: 50;
+}
+.music-btn:hover {
+    transform: scale(1.1);
+}
+.icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+.icon span {
+    width: 4px;
+    background: #fff; /* 圖示維持白色 */
+    border-radius: 2px;
+    animation: bounce 1s infinite ease-in-out;
+    opacity: 0.9;
+}
+.icon span:nth-child(1){height: 7px; animation-delay: 0s;}
+.icon span:nth-child(2){height: 13px; animation-delay: 0.2s;}
+.icon span:nth-child(3){height: 9px; animation-delay: 0.4s;}
+@keyframes bounce {0%{transform:scaleY(1);}50%{transform:scaleY(2.2);}100%{transform:scaleY(1);}}
+.music-paused span {
+    animation-play-state:paused !important;
+    opacity:0.4;
+}
+
+/* ------------------------------------
+ * 8. 彈幕留言樣式 (Danmu)
+ * ------------------------------------ */
+.danmu-card{
+    /* 移除背景漸變，讓後方的相簿背景顯示出來 */
+    background: transparent;
+    overflow: hidden;
+}
+.danmu-card .card{
+  /* 留言卡片本身需要絕對定位在相簿背景之上 */
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  color: white;
+  overflow: hidden;
+  padding: 20px;
+  box-sizing: border-box;
+  /* 增加透明黑色疊加層，讓文字更清晰 */
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 5;
+}
+
+/* 彈幕層覆蓋全螢幕 */
+.danmu-layer{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 10;
+}
+.danmu-item{
+  position: absolute;
+  white-space: nowrap;
+  font-weight:600;
+  font-size:18px;
+  color:#fff;
+  text-shadow:0 1px 4px rgba(0,0,0,0.6);
+  pointer-events:auto;
+  padding:4px 8px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.06);
+  transform:translateX(100vw);
+  will-change:transform;
+}
+
+/* 頂部資訊區 */
+.danmu-header{
+  position: absolute;
+  top:20px;
+  left:50%;
+  transform: translateX(-50%);
+  width: 95%;
+  max-width: 900px;
+  z-index: 20;
+}
+.danmu-header h1{margin:0 0 8px 0;font-size:28px;color:white;}
+.danmu-header p.lead{margin:0 0 14px 0;opacity:.9;}
+.danmu-card .form-wrapper{
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 95%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 20;
+}
+.danmu-card .form{
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.danmu-card input[type="text"]{
+    padding:10px;
+    border-radius:8px;
+    border:0;
+    background:rgba(255,255,255,0.06);
+    color:#fff;
+    flex:0 0 160px;
+}
+.danmu-card input.msg{flex:1}
+.danmu-card .btn{
+    background:#fff;
+    color:#000;
+    padding:10px 16px;
+    border-radius:999px;
+    border:none;
+    cursor:pointer;
+}
+.danmu-card .meta{
+    color:#fff;
+    font-size:13px;
+    opacity:.8;
+    text-align:center;
+}
+
+@media(max-width:600px){
+  .danmu-header h1{font-size:20px;}
+  .danmu-item{font-size:14px;}
+  .danmu-card input[type="text"]{flex-basis:110px;}
+}

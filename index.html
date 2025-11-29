@@ -1,130 +1,126 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>專屬邀請頁面</title>
-<style>
-body {
-  margin: 0;
-  height: 100vh;
-  font-family: "Noto Sans TC", sans-serif;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #5b2be0, #8a63f8, #5b2be0);
-  background-size: 300% 300%;
-  animation: bgmove 8s ease infinite;
-}
-@keyframes bgmove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-.container {
-  text-align: center;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 40px;
-  border-radius: 16px;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-h1 { margin-bottom: 10px; font-size: 2rem; letter-spacing: 1px; }
-p { font-size: 1rem; margin-bottom: 20px; }
-button {
-  background: #fff;
-  color: #5b2be0;
-  border: none;
-  border-radius: 25px;
-  padding: 12px 30px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin: 5px;
-}
-button:hover { transform: scale(1.05); background: #f1e9ff; }
-.code { font-size: 0.9rem; opacity: 0.9; margin-top: 10px; }
-/* 手機自適應按鈕換行 */
-.buttons-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💌 我們的電子喜帖 🤵👰</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-  <h1 id="title">專屬邀請頁面</h1>
-  <p id="message">請點擊下方按鈕以查看內容</p>
-  <div class="buttons-wrapper">
-    <button id="actionBtn">立即查看</button>
-    <button id="secondBtn">前往官方網站</button>
-    <button id="thirdBtn">分享邀請頁</button>
-  </div>
-  <div class="code" id="codeInfo"></div>
-</div>
 
-<script>
-const urlParams = new URLSearchParams(window.location.search);
-const path = window.location.pathname.split("/").filter(Boolean);
-const inviteCode = path[1] || "6885dc"; // 預設邀請碼
-const version = urlParams.get("v") || "v1";
+    <div id="envelope-page" class="page active">
+        <div class="envelope-wrapper">
+            <div class="envelope">
+                <div class="back"></div>
+                
+                <div class="letter">
+                    <div class="letter-content">
+                        <h3>We Are Married</h3>
+                        <p>誠摯邀請您見證我們的幸福</p>
+                    </div>
+                </div>
+                
+                <div class="pocket"></div>
+                
+                <div class="flap">
+                    <div class="seal" onclick="openEnvelope()">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="envelope-text">You're invited</p>
+    </div>
 
-// 顯示代碼與版本資訊
-document.getElementById("codeInfo").innerText =
-  `邀請碼：${inviteCode}　版本：${version}`;
+    <div id="content-page" class="page">
+        
+        <header class="fixed-bar">
+            <span onclick="showSection('wedding-info')">👨‍👩‍👧‍👦 婚禮資訊</span>
+            <span onclick="showSection('danmu-comment')">✉️ 祝福留言</span>
+            <span onclick="scrollToSection('location')">📍 地圖導航</span>
+        </header>
 
-// 按邀請碼設定頁面資訊與按鈕
-const dataMap = {
-  "6885dc": {
-    title: "🎉 歡迎加入 VIP 專屬活動！",
-    message: "這是您的邀請頁面，點擊下方按鈕進入。",
-    button: "留下祝福",
-    link: "invite2.html",
-    secondButton: "參加婚禮GO!",
-    secondLink: "https://docs.google.com/forms/d/e/1FAIpQLScqtqDqtzWxFfjNVssRJI-fF8QA7eAABio5qBMoYBfuMzzybA/viewform?usp=dialog",
-    thirdButton: "圖片輪播",
-    thirdLink: "background.html"
-  },
-  "default": {
-    title: "歡迎來到邀請頁面",
-    message: "請確認您的邀請碼是否正確。",
-    button: "留下祝福",
-    link: "invite2.html",
-    secondButton: "參加婚禮GO!",
-    secondLink: "https://docs.google.com/forms/d/e/1FAIpQLScqtqDqtzWxFfjNVssRJI-fF8QA7eAABio5qBMoYBfuMzzybA/viewform?usp=dialog",
-    thirdButton: "圖片輪播",
-    thirdLink: "background.html"
-  }
-};
+        <div class="scrollable-content">
+            
+            <section id="wedding-info" class="content-section active">
+                <section class="hero-section">
+                    <h1>**我們結婚了！**</h1>
+                    <h2>褚長財 & 李姿慧</h2>
+                    <p class="date">| 2026 年 03 月 21 日 |</p>
+                </section>
+                
+                <section>
+                    <h3>致我們最親愛的朋友、家人：</h3>
+                    <p>在這個充滿愛與承諾的日子，我們誠摯邀請您來見證和分享我們生命中最美好的時刻。</p>
+                    <p>您的光臨，將是我們最大的榮幸。</p>
+                </section>
 
-const info = dataMap[inviteCode] || dataMap["default"];
-document.getElementById("title").innerText = info.title;
-document.getElementById("message").innerText = info.message;
+                <section class="details" id="location">
+                    <h3>💒 婚禮詳情</h3>
+                    <div class="detail-item">
+                        <h4>日期與時間</h4>
+                        <p>2026 年 3 月 21 日 (星期六)</p>
+                        <p>午宴入場：12:00 PM</p>
+                    </div>
+                    <div class="detail-item">
+                        <h4>婚宴地點</h4>
+                        <p>新北市 永和區 成功路一段 80 號 天悅婚宴會館</p>
+                        <p><a href="https://www.google.com/maps/dir//234新北市永和區成功路一段80號B1/@24.9929215,121.5712493,15z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3442a956331b7af1:0x6fd75b1c3605810e!2m2!1d121.5267319!2d25.0031606?entry=ttu&g_ep=EgoyMDI1MTEyMy4xIKXMDSoASAFQAw%3D%3D">📍 點擊開啟地圖導航</a></p>
+                        <h4>參加婚禮GO!</h4>
+                        <a href="https://docs.google.com/forms/d/1Y3-tm_LqdndM5Zj0vt17bXKBy_81esOzhNvjR4pnTjQ/edit" target="_blank">
+                            📝 點擊填寫出席意願 (RSVP)
+                        </a>
+                    </div>
+                </section>
+                
+                <footer>
+                    <p>期待您的蒞臨！</p>
+                    <p>&copy; 褚長財 & 李姿慧 敬邀</p>
+                </footer>
+            </section>
 
-// 設定第一個按鈕
-const actionBtn = document.getElementById("actionBtn");
-actionBtn.innerText = info.button;
-actionBtn.onclick = () => {
-  const targetUrl = `${info.link}?code=${inviteCode}&v=${version}`;
-  window.location.href = targetUrl;
-};
 
-// 設定第二個按鈕
-const secondBtn = document.getElementById("secondBtn");
-secondBtn.innerText = info.secondButton;
-secondBtn.onclick = () => {
-  window.location.href = info.secondLink;
-};
+            <section id="danmu-comment" class="content-section full-screen danmu-card">
+                
+                <div class="carousel-wrapper background-slides">
+                    <div class="slides">
+                        <div class="slide"><img src="images/LINE_NOTE_251114_1.jpg"></div>
+                        <div class="slide"><video src="videos/1.mp4" muted playsinline></video></div>
+                        <div class="slide"><img src="images/LINE_NOTE_251114_2.jpg"></div>
+                        <div class="slide"><img src="images/LINE_NOTE_251114_3.jpg"></div>
+                    </div>
+                </div>
 
-// 設定第三個按鈕
-const thirdBtn = document.getElementById("thirdBtn");
-thirdBtn.innerText = info.thirdButton;
-thirdBtn.onclick = () => {
-  window.location.href = info.thirdLink;
-};
-</script>
+                <div class="card">
+                    <div class="danmu-layer" id="danmuLayer"></div>
+
+                    <div class="danmu-header">
+                        <h1 id="title">即時彈幕祝福</h1>
+                        <p class="lead" id="subtitle">請輸入暱稱與祝福留言。</p>
+                    </div>
+
+                    <div class="form-wrapper">
+                        <div class="form">
+                            <input id="nick" type="text" placeholder="暱稱 (最多30字)" maxlength="30" required>
+                            <input id="msg" class="msg" type="text" placeholder="說點什麼吧 (最多200字)" maxlength="200" required>
+                            <button id="sendBtn" class="btn">送出</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <audio id="background-music"></audio>
+        <div id="musicControl" class="music-btn music-paused" onclick="toggleMusic()">
+            <div class="icon"><span></span><span></span><span></span></div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    
+    <script src="script.js"></script>
 </body>
 </html>
