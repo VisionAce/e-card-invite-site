@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💌 Our Digital Wedding Invitation 🤵👰</title>
+    <meta property="og:title" content="Changcai Chu & Zihui Li Wedding Invitation">
+    <meta property="og:description" content="You are cordially invited to celebrate our union on March 21, 2026.">
+    <meta property="og:image" content="https://e-card-invite-site.vercel.app/images/LINE_NOTE_251114_1.jpg">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://e-card-invite-site.vercel.app/en.html">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="envelope-page" class="page active">
+        <div class="envelope-wrapper">
+            <div class="envelope">
+                <div class="back"></div>
+                <div class="letter">
+                    <div class="letter-content">
+                        <h3>We Are Married</h3>
+                        <p>You are cordially invited to celebrate our wedding.</p>
+                    </div>
+                </div>
+                <div class="pocket"></div>
+                <div class="flap">
+                    <div class="seal" onclick="openEnvelope()">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="envelope-text">Please tap the heart to open the invitation</p>
+    </div>
+
+    <div id="content-page" class="page">
+        
+        <header class="fixed-bar">
+            <span onclick="scrollToSection('wedding-info')">👨‍👩‍👧‍👦</span>
+            <span onclick="showSection('danmu-comment')">✉️ Messages</span>
+            <span onclick="openMapLink()">📍 Map</span>
+            
+            <select id="lang-select" onchange="window.location.href = this.value">
+                <option value="index.html">中文</option>
+                <option value="en.html" selected>English</option>
+                <option value="ko.html">한국어</option>
+            </select>
+        </header>
+
+        <div class="scrollable-content">
+            
+            <section id="wedding-info" class="content-section active">
+                <section class="hero-section">
+                    <h1>**We Are Getting Married!**</h1>
+                    <h2></h2>
+                    <h2>
+                    🤵 <span class="groom-name">Changcai Chu</span> &
+                    👰 <span class="bride-name">Zihui Li</span>
+                    </h2>
+                    <p class="date">| March 21, 2026 |</p>
+                </section>
+                
+                <section>
+                    <h3>To our dearest friends and family:</h3>
+                    <p>We invite you to witness and share the joy of our union on this day of love and commitment.</p>
+                    <p>Your presence will be our greatest honor.</p>
+                </section>
+
+                <section class="details" id="location">
+                    <h3>💒 Wedding Details</h3>
+                    <div class="detail-item">
+                        <h4>Date & Time</h4>
+                        <p>March 21, 2026 (Saturday)</p>
+                        <p>Lunch Reception: 12:00 PM</p>
+                    </div>
+                    <div class="detail-item">
+                        <h4>Venue</h4>
+                        <p>No. 80, Sec. 1, Chenggong Rd., Yonghe Dist., New Taipei City 234036, Taiwan (R.O.C.)</p>
+                        
+                        <p><a href="https://maps.app.goo.gl/zgUVjRHktpzGR86W6?g_st=ipc" target="_blank">📍 Open Map Navigation</a></p>
+                        
+                        <p>
+                            <a href="RSVP連結" target="_blank">
+                                📝 RSVP (Reply Card)
+                            </a>
+                        </p>
+                        
+                    </div>
+                </section>
+                
+                <footer>
+                    <p>We look forward to celebrating with you!</p>
+                    <p>&copy; Cordially Invited by: Mr. Guoqin Chu and Mrs. Guirui Yang (Parents of the Groom)</p>
+                    <p>&copy; Cordially Invited by: Manju Jiang (Mother of the Bride)</p>
+                    <p>&copy; Cordially Invited by: Changcai Chu & Zihui Li (The Couple)</p>
+                </footer>
+            </section>
+
+
+            <section id="danmu-comment" class="content-section full-screen danmu-card">
+                
+                <div class="carousel-wrapper background-slides">
+                    <div class="slides">
+                        <div class="slide"><img src="images/LINE_NOTE_251114_1.jpg" alt="Wedding Photo 1"></div>
+                        <div class="slide"><video src="videos/1.mp4" muted playsinline></video></div>
+                        <div class="slide"><img src="images/LINE_NOTE_251114_2.jpg" alt="Wedding Photo 2"></div>
+                        <div class="slide"><img src="images/LINE_NOTE_251114_3.jpg" alt="Wedding Photo 3"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="danmu-layer" id="danmuLayer"></div>
+
+                    <div class="danmu-header">
+                        <h1>Live Celebration Messages</h1>
+                    </div>
+
+                    <div class="form-wrapper">
+                        <div class="form">
+                            <input id="nick" type="text" placeholder="Nickname (Max 30 chars)" maxlength="30" required>
+                            <input id="msg" class="msg" type="text" placeholder="Write a message (Max 200 chars)" maxlength="200" required>
+                            <button id="sendBtn" class="btn">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+        <audio id="background-music"></audio>
+        <div id="musicControl" class="music-btn music-paused" onclick="toggleMusic()">
+            <div class="icon"><span></span><span></span><span></span></div>
+        </div>
+    </div>
+
+    <script>
+        const i18nAlerts = {
+            alertNick: 'Please enter a nickname.',
+            alertMsg: 'Please enter a message.',
+            alertNickExists: 'Nickname already exists. Please use a different one.'
+        };
+    </script>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
