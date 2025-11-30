@@ -348,3 +348,9 @@ function handleTransitionEnd(){
     startInterval();
   }
 }
+
+window.openMapLink = function() {
+    // 您指定的連結
+    const mapUrl = "https://maps.app.goo.gl/zgUVjRHktpzGR86W6?g_st=ipc";
+    window.open(mapUrl, '_blank');
+};
