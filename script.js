@@ -354,3 +354,9 @@ window.openMapLink = function() {
     const mapUrl = "https://maps.app.goo.gl/zgUVjRHktpzGR86W6?g_st=ipc";
     window.open(mapUrl, '_blank');
 };
+
+window.openWeddingLink = function() {
+    // 您指定的連結
+    const weddingUrl = "https://docs.google.com/forms/d/e/1FAIpQLScqtqDqtzWxFfjNVssRJI-fF8QA7eAABio5qBMoYBfuMzzybA/viewform?usp=dialog";
+    window.open(weddingUrl, '_blank');
+};
