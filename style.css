@@ -206,9 +206,13 @@ body, html {
 /* ------------------------------------
  * 4. 內容頁面樣式 (滾動設定)
  * ------------------------------------ */
-h1, h2, h3 {
+h1, h3 {
     text-align: center;
     color: #8B0000;
+}
+h2 {
+    text-align: center;
+    color: #B8860B;
 }
 
 /* 頂部功能導航欄 (固定不動) */
@@ -250,24 +254,26 @@ section {
 }
 
 .hero-section {
-    background: url('wedding_bg.jpg') no-repeat center center/cover;
-    color: white;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-    padding: 50px 20px;
-    min-height: 250px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    background: url('images/LINE_NOTE_251114_4.jpg') no-repeat center center/cover;
+    
+    /* 圓角設計 */
+    border-radius: 40px;
+    
+    /* 雙層框線效果：利用 box-shadow 做第二層金邊 */
+    border: 8px solid #fff;
+    box-shadow: 0 0 0 2px #d4af37, 0 10px 20px rgba(0,0,0,0.1);
+    min-height: 350px;
 }
 
-.hero-section h1 { color: white; margin-bottom: 0; font-size: 32px; }
-.hero-section h2 { color: white; margin-top: 5px; font-size: 24px; }
 .date {
-    font-size: 16px;
-    margin-top: 15px;
-    padding: 5px 10px;
-    background: rgba(139, 0, 0, 0.7);
-    border-radius: 5px;
+    background: #8B0000; /* 深紅緞帶色 */
+    color: #fff;
+    padding: 10px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    border-radius: 10px;
 }
 
 .details h4 {
