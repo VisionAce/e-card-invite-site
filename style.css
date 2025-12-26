@@ -358,8 +358,8 @@ footer {
  * 7. 新增：音樂控制按鈕樣式
  * ------------------------------------ */
 .music-btn {
-  width: 55px;
-  height: 55px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   /* 核心修正：改為主題紅色，提供高對比 */
   background: #8B0000;
