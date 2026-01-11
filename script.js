@@ -351,8 +351,14 @@ function handleTransitionEnd(){
 
 window.openMapLink = function() {
     // 您指定的連結
-    const mapUrl = "https://maps.app.goo.gl/zgUVjRHktpzGR86W6?g_st=ipc";
+    const mapUrl = "https://maps.app.goo.gl/jezzJtH5PCQTCzJCA?g_st=ic";
     window.open(mapUrl, '_blank');
+};
+
+window.openParkLink = function() {
+    // 您指定的連結
+    const parkUrl = "https://maps.app.goo.gl/JS87spJnYhpk9H1W9?g_st=il";
+    window.open(parkUrl, '_blank');
 };
 
 window.openWeddingLink = function() {
