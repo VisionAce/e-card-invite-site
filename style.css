@@ -468,7 +468,7 @@ footer {
   bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
+  width: 95%;
   max-width: 900px;
   display: flex;
   flex-direction: column;
@@ -478,7 +478,7 @@ footer {
 .danmu-card .form{
   display: flex;
   gap: 8px;
-  align-items: left;
+  align-items: flex-start;
 }
 .danmu-card input[type="text"]{
     padding:10px;
