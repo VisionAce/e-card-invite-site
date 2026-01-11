@@ -366,7 +366,7 @@ footer {
   /* 移除 backdrop-filter */
   position: fixed;
   right: 20px;
-  bottom: 70px;
+  bottom: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -465,7 +465,7 @@ footer {
 .danmu-header p.lead{margin:0 0 14px 0;opacity:.9;}
 .danmu-card .form-wrapper{
   position: absolute;
-  bottom: 10px;
+  bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
   width: 95%;
