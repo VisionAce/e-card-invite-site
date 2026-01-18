@@ -289,6 +289,21 @@ footer {
     color: #999;
 }
 
+/* 容器設定：讓內容置中並增加間距 */
+.map-container, .nav-container {
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+}
+
+/* 核心：響應式圖片設定 */
+.responsive-img {
+    max-width: 100%;   /* 圖片最大寬度不超過螢幕寬度 */
+    height: auto;      /* 高度等比例縮放，避免拉伸變形 */
+    display: block;    /* 消除圖片下方微小縫隙 */
+    margin: 0 auto;    /* 配合 display:block 使用可水平置中 */
+    border-radius: 8px; /* 選用：讓圖片轉角圓滑一點，看起來更現代 */
+}
 /* ------------------------------------
  * 5. 內容區塊切換樣式
  * ------------------------------------ */
